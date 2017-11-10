@@ -1,4 +1,4 @@
-package br.com.caelum.leilao.palindromo;
+package br.com.caelum.palindromo;
 
 public class Palindromo {
 
