@@ -1,4 +1,4 @@
-package br.com.caelum.palindromo.teste;
+package br.com.caelum.palindromo;
 
 import org.junit.Assert;
 import org.junit.Test;

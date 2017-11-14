@@ -1,4 +1,4 @@
-package br.com.caelum.matematica.teste;
+package br.com.caelum.matematica;
 
 import static org.junit.Assert.*;
 
