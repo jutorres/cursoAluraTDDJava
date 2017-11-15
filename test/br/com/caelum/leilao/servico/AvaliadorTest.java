@@ -5,7 +5,11 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+
 import br.com.caelum.leilao.builder.CriadorDeLeilao;
+import br.com.caelum.leilao.dominio.Lance;
 import br.com.caelum.leilao.dominio.Leilao;
 import br.com.caelum.leilao.dominio.Usuario;
 import br.com.caelum.leilao.servico.Avaliador;
@@ -31,32 +35,26 @@ public class AvaliadorTest {
 	public void deveEntenderLancesEmOrdemCrescente() {
 		Leilao leilao = new CriadorDeLeilao()
 				.para("Passagem aerea")
-				.lance(maria, 250.0)
+				.lance(maria, 200.0)
 				.lance(joao, 300.0)
 				.lance(jose, 400.0)
 				.constroi();
 		
 		leiloeiro.avalia(leilao);
 		
-		double maiorEsperado = 400.0;
-		double menorEsperado = 250.0;
-		double mediaEsperada = 316.666666;
-		
-		assertEquals(maiorEsperado, leiloeiro.getMaiorDeTodos(), 0.0001);
-		assertEquals(menorEsperado, leiloeiro.getMenorDeTodos(), 0.0001);
-		assertEquals(mediaEsperada, leiloeiro.getMediaDosLances(), 0.0001);
+		assertThat(leiloeiro.getMaiorDeTodos(), equalTo(400.0));
+		assertThat(leiloeiro.getMenorDeTodos(), equalTo(200.0));
+		assertThat(leiloeiro.getMediaDosLances(), equalTo(300.0));
 		
 	}
 	
-	@Test
-    public void testaMediaDeZeroLance(){
+	@Test(expected=RuntimeException.class)
+    public void naoDeveAvaliarLeiloesSemNenhumLanceDado(){
         Leilao leilao = new CriadorDeLeilao()
         		.para("Cafeteira")
         		.constroi();
         
         leiloeiro.avalia(leilao);
-
-        assertEquals(0, leiloeiro.getMediaDosLances(), 0.0001);
 
     }
 	
@@ -68,10 +66,10 @@ public class AvaliadorTest {
 				.constroi();
 		
 		leiloeiro.avalia(leilao);
-
-		assertEquals(400.0, leiloeiro.getMaiorDeTodos(), 0.0001);
-		assertEquals(400.0, leiloeiro.getMenorDeTodos(), 0.0001);
-		assertEquals(400.0, leiloeiro.getMediaDosLances(), 0.0001);
+		
+		assertThat(leiloeiro.getMaiorDeTodos(), equalTo(400.0));
+		assertThat(leiloeiro.getMenorDeTodos(), equalTo(400.0));
+		assertThat(leiloeiro.getMediaDosLances(), equalTo(400.0));
 	}
 	
 	@Test
@@ -88,9 +86,8 @@ public class AvaliadorTest {
 		
 		leiloeiro.avalia(leilao);
 		
-		assertEquals(700.0, leiloeiro.getMaiorDeTodos(), 0.0001);
-		assertEquals(120.0, leiloeiro.getMenorDeTodos(), 0.0001);
-		
+		assertThat(leiloeiro.getMaiorDeTodos(), equalTo(700.0));
+		assertThat(leiloeiro.getMenorDeTodos(), equalTo(120.0));
 	}
 	
 	@Test
@@ -105,9 +102,8 @@ public class AvaliadorTest {
 		
 		leiloeiro.avalia(leilao);
 		
-		assertEquals(400.0, leiloeiro.getMaiorDeTodos(), 0.0001);
-		assertEquals(100.0, leiloeiro.getMenorDeTodos(), 0.0001);
-		
+		assertThat(leiloeiro.getMaiorDeTodos(), equalTo(400.0));
+		assertThat(leiloeiro.getMenorDeTodos(), equalTo(100.0));
 	}
 	
 	@Test
@@ -122,11 +118,12 @@ public class AvaliadorTest {
 		
 		leiloeiro.avalia(leilao);
 		
-		assertEquals(3, leiloeiro.getTresMaioresLances().size());
-		assertEquals(400.0, leiloeiro.getTresMaioresLances().get(0).getValor(), 0.0001);
-		assertEquals(300.0, leiloeiro.getTresMaioresLances().get(1).getValor(), 0.0001);
-		assertEquals(200.0, leiloeiro.getTresMaioresLances().get(2).getValor(), 0.0001);
-		
+		assertThat(leiloeiro.getTresMaioresLances().size(), equalTo(3));
+		assertThat(leiloeiro.getTresMaioresLances(), hasItems(
+                new Lance(maria, 400), 
+                new Lance(joao, 300),
+                new Lance(jose, 200)
+        ));
 	}
 	
 	@Test
@@ -139,21 +136,11 @@ public class AvaliadorTest {
 		
 		leiloeiro.avalia(leilao);
 		
-		assertEquals(2, leiloeiro.getTresMaioresLances().size());
-		assertEquals(300.0, leiloeiro.getTresMaioresLances().get(0).getValor(), 0.0001);
-		assertEquals(200.0, leiloeiro.getTresMaioresLances().get(1).getValor(), 0.0001);
-		
+		assertThat(leiloeiro.getTresMaioresLances().size(), equalTo(2));
+		assertThat(leiloeiro.getTresMaioresLances(), hasItems(
+                new Lance(joao, 300),
+                new Lance(jose, 200)
+        ));
 	}
 	
-	@Test
-    public void deveDevolverListaVaziaCasoNaoHajaLances() {
-		Leilao leilao = new CriadorDeLeilao()
-				.para("Boi gordo")
-				.constroi();
-
-        leiloeiro.avalia(leilao);
-
-        assertEquals(0, leilao.getLances().size());
-        assertEquals(true, leiloeiro.getTresMaioresLances().isEmpty());
-    }
 }
