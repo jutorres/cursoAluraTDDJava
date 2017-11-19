@@ -1,4 +1,4 @@
-# Testes: TDD com Java
+# Curso "Testes: TDD com Java" da Alura
 
 Este curso abordou os seguintes tópicos:
 
